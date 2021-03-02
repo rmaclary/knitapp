@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+	<link rel="stylesheet" href="{{ url_for('static',     filename='css/style.css') }}">
+    <meta charset="utf-8">
+    <title>Sock Assistant</title>
+  </head>
+  <body>
+    <h1> Thank you for using the Pattern Assistant! </h1>
+	<h3> Here are some tips to get you started </h3>
+	<ul>
+		<li>Recommended needle size: {{needleSizeSm}} to {{needleSizeLg}}</li>
+		<li>Yarn required: {{yarnNeeded}}
+			<ul>
+				<li><i>Yarn is usually sold in either 50 gram or 100 gram balls/skeins. Most adult socks will require at least 2 50 gram skeins or 1 100 gram skein</i></li>
+			</ul>
+		</li>
+		<li>Measurements listed - check to make sure they are correct!
+			<ul>
+				<li>Ankle circumference: {{ankle}} {{units}}</li>
+				<li>Foot Length: {{footLength}} {{units}}</li>
+				<li>Stitches per {{units3}}: {{spi}}</li>
+				<li>Rows per {{units3}}: {{rpi}}</li>
+			</ul>
+		</li>
+	</ul>
+	<br>
+	<p>The pattern below is a very basic top-down sock knit entirely in stockinette stitch. It is recommended to add some type of ribbing at the top of the cuff (or the whole cuff) to keep the socks from falling down. Feel free to experiment with stitch patterns and your own designs, but know that the gauge and stitch counts will have to be adjusted along with any pattern alterations</p>
+	
+	<form action="/download" method="post">
+		<p>Click here to get a PDF of your knitting pattern</p>
+		<input type="submit" value="Give me my pattern!"/>
+	</form>
+	<br>
+	<p>Want to try again with different measurements?</p>
+	<p>Click here to go <a href="{{ url_for('home') }}">Home</a></p>
+   
+  </body>
+</html>

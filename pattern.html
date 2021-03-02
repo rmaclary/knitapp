@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+	<link rel="stylesheet" href="{{ url_for('static',     filename='css/style.css') }}">
+    <meta charset="utf-8">
+    <title>Sweater Assistant</title>
+  </head>
+  <body>
+    
+    <h1> Thank you for using the Pattern Assistant! </h1>
+	<h3> Here are some tips to get you started </h3>
+	<ul>
+		<li>Recommended needle size: {{needleSizeSm}} to {{needleSizeLg}}</li>
+		<li>Yarn required: {{yarnNeededSm}} - {{yarnNeededLg}} {{units2}}
+			<ul>
+				<li><i>Please note that yarn amounts are approximate. Your project may end up requiring more or less yarn, and these numbers should only be used as a guide</i></li>
+			</ul>
+		</li>
+		<li>Measurements listed - check to make sure they are correct!
+			<ul>
+				<li>Neck: {{neck}} {{units}}</li>
+				<li>Chest: {{bust}} {{units}}</li>
+				<li>Waist: {{waist}} {{units}}</li>
+				<li>Hips: {{hips}} {{units}}</li>
+				<li>Arm (at bicep): {{arm}} {{units}}</li>
+				<li>Total length: {{upperBack+upperTorso+lowerTorso}} {{units}}</li>
+				<li>Arm length: {{armLength}} {{units}}</li>
+				<li>Stitches per {{units3}}: {{spi}}</li>
+				<li>Rows per {{units3}}: {{rpi}}</li>
+			</ul>
+		</li>
+	</ul>
+	<br>
+	<p>The pattern below is a very basic top-down raglan knit entirely in stockinette stitch. Feel free to experiment with stitch patterns and your own designs, but know that the gauge and stitch counts will have to be adjusted along with any pattern alterations</p>
+	
+	<form action="/download1" method="post">
+		<p>Click here to get a PDF of your knitting pattern</p>
+		<input type="submit" value="Give me my pattern!"/>
+	</form>
+	<br>
+	<p>Want to try again with different measurements?</p>
+	<p>Click here to go <a href="{{ url_for('home') }}">Home</a></p>
+
+  </body>
+</html>
