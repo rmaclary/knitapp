@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, make_response, send_file
+from flask import Flask, render_template, request, session, make_response
 import pdfkit
 from reportlab.rl_config import defaultPageSize
 config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
@@ -18,7 +18,6 @@ def home():
 
 @app.route("/download1", methods = ["POST"])
 def sweaterpdf():
-    spi = session['spi']
     rpi = session['rpi']
     castOn = session['castOn']
     bustCount = session['bustCount']
@@ -76,7 +75,7 @@ def sweaterpdf():
                 pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, m1, knit to 2 stitches before side marker, m1, k1, sl marker, repeat from *. Repeat increase every {hipIncs} round {hipIncRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN))
             else:
                 if(bottomCount < bustCount):
-                    pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, k2tog, knit to 3 stitches before side marker, k2tog, k1, sl marker, repeat from *. Repeat decrease every {waistDecs} round {waistDecRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN)) 
+                    pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, k2tog, knit to 3 stitches before side marker, k2tog, k1, sl marker, repeat from *. Repeat decrease every {waistDecs} round {waistDecRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN))
                 else:
                     pattern.append(Paragraph(f"Knit in the round for {(lowerTorso + upperTorso)} {units} or until desired length is reached. Bind off loosely.", styleN))
     pattern.append(spacer)
@@ -94,16 +93,80 @@ def sweaterpdf():
     output.close()
 
     response = make_response(pdf_out)
-    response.headers['Content-Disposition'] = "attachment; filename='fml.pdf"
+    response.headers['Content-Disposition'] = "attachment; filename='Basic_Sweater_Pattern.pdf"
     response.mimetype = 'application/pdf'
     return response
 
 @app.route("/download", methods =["POST"])
 def sockpdf():
-    
-    return send_file("mysockpattern.pdf", as_attachment=True)
+    castOn = session['castOn']
+    heelFlapRows = session['heelFlapRows']
+    heelTurnFirstRow = session['heelTurnFirstRow']
+    heelTurnSts = session['heelTurnSts']
+    finalHeelCount = session['finalHeelCount']
+    gussetPU = session['gussetPU']
+    gussetDecCount = session['gussetDecCount']
+    footCount = session['footCount']
+    footLength = session['footLength']
+    units = session['units']
+    toeLength = session['toeLength']
+    toeDecCount = session['toeDecCount']
+    toeCount = session['toeCount']
+    cuffLength = session['cuffLength']
+    heelFlap = session['heelFlap']
 
-@app.route("/pattern", methods =["POST"])                   
+    #Pattern PDF output
+    styles = getSampleStyleSheet()
+    styleN = styles['Normal']
+    spacer = Spacer(0,0.25*inch)
+    page_height=defaultPageSize[1]
+    page_width=defaultPageSize[0]
+    pattern = []
+    #Paragraphs for knitting pattern
+    pattern.append(Paragraph("Stitch Abbreviation guide", styleN))
+    pattern.append(Paragraph("<b>-k1:</b> Knit one", styleN))
+    pattern.append(Paragraph("<b>-m1:</b> Make one", styleN))
+    pattern.append(Paragraph("<b>-k2tog:</b> Knit 2 together", styleN))
+    pattern.append(Paragraph("<b>-ssk:</b> Slip Slip Knit", styleN))
+    pattern.append(Paragraph("<b>-sl:</b> slip 1 from left to right needle", styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Cast on {castOn} stitches and join in the round, being careful not to twist. Knit in the round in desired pattern for {round(cuffLength)} {units} or until cuff has reached desired length. Divide for heel flap: place last {heelFlap} stitches on hold for top of foot. Heel flap will be worked over remaining {heelFlap} stitches.",styleN))
+    pattern.append(Paragraph("Row 1: *sl1, k1* repeat until end of round",styleN))
+    pattern.append(Paragraph("Row 2: sl1, purl to end of round",styleN))
+    pattern.append(Paragraph(f"Work these 2 rows a total of {heelFlapRows/2} times, ending after a wrong side (purl) row. Begin heel turn as follows:",styleN))
+    pattern.append(Paragraph(f"Row 1: k{heelTurnFirstRow}, k2tog, k1, turn",styleN))
+    pattern.append(Paragraph(f"Row 2: sl1, p{heelTurnSts+1}, p2tog, p1, turn",styleN))
+    pattern.append(Paragraph(f"Row 3: sl1, k{heelTurnSts+2}, k2tog, k1, turn",styleN))
+    pattern.append(Paragraph(f"Continue in this fashion until all stitches have been worked. {finalHeelCount} stitches remaining for heel.",styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Knit across {finalHeelCount} heel stitches. Pick up and knit {gussetPU} stitches on the side of the sock (1 stitch in each slipped stitch from the heel flap), place marker for side, knit across {heelFlap} stitches on holder for top of foot, place marker for second side, pick up and knit {gussetPU} more stitches on other side of sock. Knit across {finalHeelCount/2} stitches from heel, place marker. This will be your new beginning of round. Begin gusset decreases as follows:",styleN))
+    pattern.append(Paragraph(f"Round 1: Knit to 3 stitches before side marker. k2tog, k1, sl marker, knit across {heelFlap} top of foot stitches, sl marker, k1, ssk, knit to end of round (2 stitches decreased)",styleN))
+    pattern.append(Paragraph("Round 2: Knit to end of round",styleN))
+    pattern.append(Paragraph(f"Continue these 2 rounds {gussetDecCount-1} more times. {footCount} stitches remaining for foot.",styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Knit in the round until foot length measures {round(footLength-toeLength)} {units} or until sock is {round(toeLength)} {units} less than desired final length. Begin toe decreases as follows:",styleN))
+    pattern.append(Paragraph("Round 1: Knit to 3 sts before side marker, k2tog, k1, sl marker, k1, ssk, knit to 3 sts before 2nd side marker, k2tog, k1, sl marker, k1, ssk, knit to end of round (4 stitches decreased)",styleN))
+    pattern.append(Paragraph("Round 2: Knit to end of round",styleN))
+    pattern.append(Paragraph(f"Continue these 2 rounds {toeDecCount-1} times more {toeCount} stitches remain. Knit to first side marker, and place all stitches from heel and sides onto one DPN, and sts from top of foot onto a 2nd DPN. Graft together with kitchener stitch.",styleN))
+
+    output2 = io.BytesIO()
+    c = Canvas(output2) #create pdf
+    c.setFont("Helvetica-Bold", 20)
+    c.drawCentredString(page_width/2, page_height-60, "Basic Sock Pattern") #title
+    f = Frame(inch, inch, 6*inch, 9*inch, showBoundary=1) #frame for pattern
+    f.addFromList(pattern,c) #put pattern in frame
+    c.showPage()
+    c.save()
+
+    pdf2_out = output2.getvalue()
+    output2.close()
+
+    response = make_response(pdf2_out)
+    response.headers['Content-Disposition'] = "attachment; filename='Basic_Sock_Pattern.pdf"
+    response.mimetype = 'application/pdf'
+    return response
+
+@app.route("/pattern", methods =["POST"])
 def pattern():
     gAnswer = request.form["gaugeAns"]
     sAnswer = request.form["shapeAns"]
@@ -205,16 +268,16 @@ def pattern():
                                 needleSizeLg = 13
                                 yarnNeededSm = 400
                                 yarnNeededLg = 800
-                               
+
     if(unitType == "centimeters"): #convert yarn amount to meters if cm selected
         yarnNeededSm = round(yarnNeededSm / 1.094)
         yarnNeededLg = round(yarnNeededLg / 1.094)
 
-    if(unitType == "centimeters"): #spi/rpi conversion to cm 
+    if(unitType == "centimeters"): #spi/rpi conversion to cm
         spi = round(spi * 2.54)
         rpi = round(rpi * 2.54)
-       
-                                    
+
+
     neck = float(request.form["neck"])
     bust = float(request.form["bust"])
     waist = float(request.form["waist"])
@@ -326,7 +389,7 @@ def pattern():
     session['bottomSleeveCount'] = bottomSleeveCount
     session['sAnswer'] = sAnswer
     session['tAnswer'] = tAnswer
-    
+
     return render_template("pattern.html", spi=spi, rpi=rpi,
     neck=neck, bust=bust, waist=waist, hips=hips, arm=arm, upperBack=upperBack,
     upperTorso=upperTorso, lowerTorso=lowerTorso, armLength=armLength,
@@ -334,7 +397,7 @@ def pattern():
     needleSizeSm=needleSizeSm, needleSizeLg=needleSizeLg, units2=units2,
     units3=units3)
 
-@app.route("/sockpattern", methods =["POST"])                   
+@app.route("/sockpattern", methods =["POST"])
 def sockpattern():
 
     gAnswer = request.form["gaugeAns1"]
@@ -386,7 +449,7 @@ def sockpattern():
 
     if(unitType == "centimeters" and gAnswer == "yes"): #spi/rpi conversion to inches for purposes of needle sizing
         spi = round(spi / 2.54)
-        rpi = round(rpi / 2.54)    
+        rpi = round(rpi / 2.54)
     needleSizeSm = 0
     needleSizeLg = 0
     if(spi >= 8):
@@ -471,7 +534,7 @@ def sockpattern():
                                                 footLength = 12
                                             else:
                                                 ankle = 0
-                                                footLength = 0     
+                                                footLength = 0
         else:
             shoeSize = float(request.form["wsize"])
             if(shoeSize == 5):
@@ -508,11 +571,11 @@ def sockpattern():
                                         else:
                                             ankle = 0
                                             footLength = 0
-                        
 
-    if(unitType == "centimeters"): #spi/rpi conversion to cm 
+
+    if(unitType == "centimeters"): #spi/rpi conversion to cm
         spi = round(spi * 2.54)
-        rpi = round(rpi * 2.54)                
+        rpi = round(rpi * 2.54)
     if(mAnswer=="shoeSize" and unitType=="centimeters"):
         ankle = ankle * 2.54
         footLength = footLength * 2.54
@@ -539,45 +602,24 @@ def sockpattern():
         toeLength = toeLength * 2.54
         cuffLength = cuffLength * 2.54
 
-    styles = getSampleStyleSheet()
-    styleN = styles['Normal']
-    spacer = Spacer(0,0.25*inch)
-    page_height=defaultPageSize[1]
-    page_width=defaultPageSize[0]
-    pattern = []
-    #Paragraphs for knitting pattern
-    pattern.append(Paragraph("Stitch Abbreviation guide", styleN))
-    pattern.append(Paragraph("<b>-k1:</b> Knit one", styleN))
-    pattern.append(Paragraph("<b>-m1:</b> Make one", styleN))
-    pattern.append(Paragraph("<b>-k2tog:</b> Knit 2 together", styleN))
-    pattern.append(Paragraph("<b>-ssk:</b> Slip Slip Knit", styleN))
-    pattern.append(Paragraph("<b>-sl:</b> slip 1 from left to right needle", styleN))
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Cast on {castOn} stitches and join in the round, being careful not to twist. Knit in the round in desired pattern for {round(cuffLength)} {units} or until cuff has reached desired length. Divide for heel flap: place last {heelFlap} stitches on hold for top of foot. Heel flap will be worked over remaining {heelFlap} stitches.",styleN))
-    pattern.append(Paragraph("Row 1: *sl1, k1* repeat until end of round",styleN))
-    pattern.append(Paragraph("Row 2: sl1, purl to end of round",styleN))
-    pattern.append(Paragraph(f"Work these 2 rows a total of {heelFlapRows/2} times, ending after a wrong side (purl) row. Begin heel turn as follows:",styleN))
-    pattern.append(Paragraph(f"Row 1: k{heelTurnFirstRow}, k2tog, k1, turn",styleN))
-    pattern.append(Paragraph(f"Row 2: sl1, p{heelTurnSts+1}, p2tog, p1, turn",styleN))
-    pattern.append(Paragraph(f"Row 3: sl1, k{heelTurnSts+2}, k2tog, k1, turn",styleN))
-    pattern.append(Paragraph(f"Continue in this fashion until all stitches have been worked. {finalHeelCount} stitches remaining for heel.",styleN)) 
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Knit across {finalHeelCount} heel stitches. Pick up and knit {gussetPU} stitches on the side of the sock (1 stitch in each slipped stitch from the heel flap), place marker for side, knit across {heelFlap} stitches on holder for top of foot, place marker for second side, pick up and knit {gussetPU} more stitches on other side of sock. Knit across {finalHeelCount/2} stitches from heel, place marker. This will be your new beginning of round. Begin gusset decreases as follows:",styleN))
-    pattern.append(Paragraph(f"Round 1: Knit to 3 stitches before side marker. k2tog, k1, sl marker, knit across {heelFlap} top of foot stitches, sl marker, k1, ssk, knit to end of round (2 stitches decreased)",styleN))
-    pattern.append(Paragraph("Round 2: Knit to end of round",styleN))
-    pattern.append(Paragraph(f"Continue these 2 rounds {gussetDecCount-1} more times. {footCount} stitches remaining for foot.",styleN))
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Knit in the round until foot length measures {round(footLength-toeLength)} {units} or until sock is {round(toeLength)} {units} less than desired final length. Begin toe decreases as follows:",styleN))
-    pattern.append(Paragraph("Round 1: Knit to 3 sts before side marker, k2tog, k1, sl marker, k1, ssk, knit to 3 sts before 2nd side marker, k2tog, k1, sl marker, k1, ssk, knit to end of round (4 stitches decreased)",styleN))
-    pattern.append(Paragraph("Round 2: Knit to end of round",styleN))
-    pattern.append(Paragraph(f"Continue these 2 rounds {toeDecCount-1} times more {toeCount} stitches remain. Knit to first side marker, and place all stitches from heel and sides onto one DPN, and sts from top of foot onto a 2nd DPN. Graft together with kitchener stitch.",styleN))
-
-    c = Canvas('mysockpattern.pdf') #create pdf
-    c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(page_width/2, page_height-60, "Basic Sock Pattern") #title
-    f = Frame(inch, inch, 6*inch, 9*inch, showBoundary=1) #frame for pattern
-    f.addFromList(pattern,c) #put pattern in frame
-    c.save()
+    #create session variables for pdf
+    session['rpi'] = rpi
+    session['spi'] = spi
+    session['castOn'] = castOn
+    session['heelFlapRows'] = heelFlapRows
+    session['heelTurnFirstRow'] = heelTurnFirstRow
+    session['heelTurnSts'] = heelTurnSts
+    session['finalHeelCount'] = finalHeelCount
+    session['gussetPU'] = gussetPU
+    session['gussetDecCount'] = gussetDecCount
+    session['footCount'] = footCount
+    session['footLength'] = footLength
+    session['units'] = units
+    session['toeLength'] = toeLength
+    session['toeDecCount'] = toeDecCount
+    session['toeCount'] = toeCount
+    session['cuffLength'] = cuffLength
+    session['heelFlap'] = heelFlap
 
     return render_template("sockpattern.html", needleSizeSm=needleSizeSm,
                            needleSizeLg=needleSizeLg, footLength=footLength,
