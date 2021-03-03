@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, make_response, send_file
+from flask import Flask, render_template, request, session, make_response, send_file
 import pdfkit
 from reportlab.rl_config import defaultPageSize
 config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
 import math
+import io
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
@@ -17,8 +18,85 @@ def home():
 
 @app.route("/download1", methods = ["POST"])
 def sweaterpdf():
+    spi = session['spi']
+    rpi = session['rpi']
+    castOn = session['castOn']
+    bustCount = session['bustCount']
+    fbNeckCount = session['fbNeckCount']
+    sleeveNeckCount = session['sleeveNeckCount']
+    yokeIncRows = session['yokeIncRows']
+    bottomYokeCount = session['bottomYokeCount']
+    upperBack = session['upperBack']
+    lowerTorso = session['lowerTorso']
+    upperTorso = session['upperTorso']
+    units = session['units']
+    sleeveYokeEndCount = session['sleeveYokeEndCount']
+    fbYokeEndCount = session['fbYokeEndCount']
+    sleeveCO = session['sleeveCO']
+    waistDecs = session['waistDecs']
+    waistDecRows = session['waistDecRows']
+    waistCount = session['waistCount']
+    hipIncs = session['hipIncs']
+    hipIncRows = session['hipIncRows']
+    bottomCount = session['bottomCount']
+    topSleeveCount = session['topSleeveCount']
+    sleeveDecs = session['sleeveDecs']
+    sleeveDecRows = session['sleeveDecRows']
+    bottomSleeveCount = session['bottomSleeveCount']
+    tAnswer = session['tAnswer']
+    sAnswer = session['sAnswer']
 
-    return send_file("mysweaterpattern.pdf", as_attachment=True)
+    #Pattern PDF output
+    styles = getSampleStyleSheet()
+    styleN = styles['Normal']
+    spacer = Spacer(0,0.25*inch)
+    page_height=defaultPageSize[1]
+    page_width=defaultPageSize[0]
+    pattern = []
+    #Paragraphs for knitting pattern
+    pattern.append(Paragraph("Stitch Abbreviation guide", styleN))
+    pattern.append(Paragraph("<b>-k1:</b> Knit one", styleN))
+    pattern.append(Paragraph("<b>-m1:</b> Make one", styleN))
+    pattern.append(Paragraph("<b>-k2tog:</b> Knit 2 together", styleN))
+    pattern.append(Paragraph("<b>-sl:</b> slip (slip marker from left to right needle)", styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Cast on {castOn} stitches to circular needles and join in the round. Place marker for beginning of round. Knit {fbNeckCount/2},place marker, knit {sleeveNeckCount}, place marker, knit {fbNeckCount}, place marker, knit to end of round. ({fbNeckCount} stitches for front and back, {sleeveNeckCount} stitches for each sleeve)", styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Knit 2 rounds even. On next round, begin yoke increases as follows: knit to 1 stitch before marker. m1, k1, slip marker, k1, m1, knit to 1 stitch before next marker. Continue like this until end of round (do not m1 before or after end of round marker). 8 stitches increased. Increase every other row {yokeIncRows-1} times until you have {bottomYokeCount} stitches. Continue even without increasing until {upperBack} {units} or desired length to bottom of armpit is reached.", styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Divide for sleeves: knit to first marker. Remove marker (and all others as you go), and place next {sleeveYokeEndCount} stitches on holder for sleeve. Cast on {sleeveCO/2} stitches, place marker for side (this will be your new beginning of round). Cast on {sleeveCO/2} more stitches. Knit across next {fbYokeEndCount} stitches and remove marker. Place next {sleeveYokeEndCount} stitches on holder for 2nd sleeve. Cast on {sleeveCO/2} stitches. Place marker for 2nd side. Cast on {sleeveCO/2} more stitches. Knit to end of round ({bustCount} stitches).",styleN))
+    pattern.append(spacer)
+    if(sAnswer=="no"):
+        pattern.append(Paragraph(f"Knit in the round for {(lowerTorso + upperTorso)} {units} or until desired length is reached. Bind off loosely.", styleN))
+    else:
+        if(tAnswer=="hourglass"):
+            pattern.append(Paragraph(f"Knit 2 rows in the round, then begin waist decreases as follows: *k1, k2tog, knit to 3 stitches before side marker, k2tog, k, sl marker, repeat from *. Repeat decrease every {waistDecs} round {waistDecRows-1} more times ({waistCount} stitches). Knit {rpi} rows even. Begin hip increases as follows: *k1, m1, knit to 2 stitches before side marker, m1, k1, sl marker, repeat from *. Repeat increase every {hipIncs} round {hipIncRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN))
+        else:
+            if(bottomCount > bustCount):
+                pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, m1, knit to 2 stitches before side marker, m1, k1, sl marker, repeat from *. Repeat increase every {hipIncs} round {hipIncRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN))
+            else:
+                if(bottomCount < bustCount):
+                    pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, k2tog, knit to 3 stitches before side marker, k2tog, k1, sl marker, repeat from *. Repeat decrease every {waistDecs} round {waistDecRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN)) 
+                else:
+                    pattern.append(Paragraph(f"Knit in the round for {(lowerTorso + upperTorso)} {units} or until desired length is reached. Bind off loosely.", styleN))
+    pattern.append(spacer)
+    pattern.append(Paragraph(f"Knit sleeves: Place {sleeveYokeEndCount} stitches from holders onto small circulars or DPNs. Beginning in the center of underarm, pick up and knit {sleeveCO/2} stitches. Knit across {sleeveYokeEndCount} stitches. Pick up and knit {sleeveCO/2} more stitches. Place marker for beginning/end of round ({topSleeveCount} stitches). Knit even for 2 rounds. Begin sleeve shaping as follows: k1, k2tog, knit to 3 stitches before marker, k2tog, k1 (2 stitches decreased). Repeate decrease round every {sleeveDecs} rounds {sleeveDecRows-1} more times ({bottomSleeveCount} stitches). Knit even until desired length is reached, bind off all stitches loosely. Repeat these instructions for 2nd sleeve.", styleN))
+    output = io.BytesIO()
+    c = Canvas(output) #create pdf
+    c.setFont("Helvetica-Bold", 20)
+    c.drawCentredString(page_width/2, page_height-60, "Basic Sweater Pattern") #title
+    f = Frame(inch, inch, 6*inch, 9*inch, showBoundary=1) #frame for pattern
+    f.addFromList(pattern,c) #put pattern in frame
+    c.showPage()
+    c.save()
+
+    pdf_out = output.getvalue()
+    output.close()
+
+    response = make_response(pdf_out)
+    response.headers['Content-Disposition'] = "attachment; filename='fml.pdf"
+    response.mimetype = 'application/pdf'
+    return response
 
 @app.route("/download", methods =["POST"])
 def sockpdf():
@@ -178,8 +256,8 @@ def pattern():
     hipIncRows = 0
     waistDecs = 0
     hipIncs = 0
+    tAnswer = request.form["shapeType"]
     if(sAnswer=="yes"): #shaping variations
-        tAnswer = request.form["shapeType"]
         if(tAnswer=="hourglass"):
             waistDecRows = math.floor((bustCount - waistCount)/4)
             if(waistDecRows % 2 != 0): #how many waist decrease rows
@@ -220,47 +298,34 @@ def pattern():
     bottomSleeveCount = topSleeveCount - (sleeveDecRows * 2)
     sleeveDecs = round((rpi * armLength) / sleeveDecRows)
 
-    #Pattern PDF output
-    styles = getSampleStyleSheet()
-    styleN = styles['Normal']
-    spacer = Spacer(0,0.25*inch)
-    page_height=defaultPageSize[1]
-    page_width=defaultPageSize[0]
-    pattern = []
-    #Paragraphs for knitting pattern
-    pattern.append(Paragraph("Stitch Abbreviation guide", styleN))
-    pattern.append(Paragraph("<b>-k1:</b> Knit one", styleN))
-    pattern.append(Paragraph("<b>-m1:</b> Make one", styleN))
-    pattern.append(Paragraph("<b>-k2tog:</b> Knit 2 together", styleN))
-    pattern.append(Paragraph("<b>-sl:</b> slip (slip marker from left to right needle)", styleN))
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Cast on {castOn} stitches to circular needles and join in the round. Place marker for beginning of round. Knit {fbNeckCount/2},place marker, knit {sleeveNeckCount}, place marker, knit {fbNeckCount}, place marker, knit to end of round. ({fbNeckCount} stitches for front and back, {sleeveNeckCount} stitches for each sleeve)", styleN))
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Knit 2 rounds even. On next round, begin yoke increases as follows: knit to 1 stitch before marker. m1, k1, slip marker, k1, m1, knit to 1 stitch before next marker. Continue like this until end of round (do not m1 before or after end of round marker). 8 stitches increased. Increase every other row {yokeIncRows-1} times until you have {bottomYokeCount} stitches. Continue even without increasing until {upperBack} {units} or desired length to bottom of armpit is reached.", styleN))
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Divide for sleeves: knit to first marker. Remove marker (and all others as you go), and place next {sleeveYokeEndCount} stitches on holder for sleeve. Cast on {sleeveCO/2} stitches, place marker for side (this will be your new beginning of round). Cast on {sleeveCO/2} more stitches. Knit across next {fbYokeEndCount} stitches and remove marker. Place next {sleeveYokeEndCount} stitches on holder for 2nd sleeve. Cast on {sleeveCO/2} stitches. Place marker for 2nd side. Cast on {sleeveCO/2} more stitches. Knit to end of round ({bustCount} stitches).",styleN))
-    pattern.append(spacer)
-    if(sAnswer=="no"):
-        pattern.append(Paragraph(f"Knit in the round for {(lowerTorso + upperTorso)} {units} or until desired length is reached. Bind off loosely.", styleN))
-    else:
-        if(tAnswer=="hourglass"):
-            pattern.append(Paragraph(f"Knit 2 rows in the round, then begin waist decreases as follows: *k1, k2tog, knit to 3 stitches before side marker, k2tog, k, sl marker, repeat from *. Repeat decrease every {waistDecs} round {waistDecRows-1} more times ({waistCount} stitches). Knit {rpi} rows even. Begin hip increases as follows: *k1, m1, knit to 2 stitches before side marker, m1, k1, sl marker, repeat from *. Repeat increase every {hipIncs} round {hipIncRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN))
-        else:
-            if(bottomCount > bustCount):
-                pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, m1, knit to 2 stitches before side marker, m1, k1, sl marker, repeat from *. Repeat increase every {hipIncs} round {hipIncRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN))
-            else:
-                if(bottomCount < bustCount):
-                    pattern.append(Paragraph(f"Knit 2 rows in the round, then begin shaping as follows: *k1, k2tog, knit to 3 stitches before side marker, k2tog, k1, sl marker, repeat from *. Repeat decrease every {waistDecs} round {waistDecRows-1} more times ({bottomCount} stitches). Knit until desired length is reached, bind off all stitches loosely.",styleN)) 
-                else:
-                    pattern.append(Paragraph(f"Knit in the round for {(lowerTorso + upperTorso)} {units} or until desired length is reached. Bind off loosely.", styleN))
-    pattern.append(spacer)
-    pattern.append(Paragraph(f"Knit sleeves: Place {sleeveYokeEndCount} stitches from holders onto small circulars or DPNs. Beginning in the center of underarm, pick up and knit {sleeveCO/2} stitches. Knit across {sleeveYokeEndCount} stitches. Pick up and knit {sleeveCO/2} more stitches. Place marker for beginning/end of round ({topSleeveCount} stitches). Knit even for 2 rounds. Begin sleeve shaping as follows: k1, k2tog, knit to 3 stitches before marker, k2tog, k1 (2 stitches decreased). Repeate decrease round every {sleeveDecs} rounds {sleeveDecRows-1} more times ({bottomSleeveCount} stitches). Knit even until desired length is reached, bind off all stitches loosely. Repeat these instructions for 2nd sleeve.", styleN))
-    c = Canvas('mysweaterpattern.pdf') #create pdf
-    c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(page_width/2, page_height-60, "Basic Sweater Pattern") #title
-    f = Frame(inch, inch, 6*inch, 9*inch, showBoundary=1) #frame for pattern
-    f.addFromList(pattern,c) #put pattern in frame
-    c.save()
+    #create session variables for pdf
+    session['rpi'] = rpi
+    session['spi'] = spi
+    session['castOn'] = castOn
+    session['bustCount'] = bustCount
+    session['fbNeckCount'] = fbNeckCount
+    session['sleeveNeckCount'] = sleeveNeckCount
+    session['yokeIncRows'] = yokeIncRows
+    session['bottomYokeCount'] = bottomYokeCount
+    session['upperBack'] = upperBack
+    session['lowerTorso'] = lowerTorso
+    session['upperTorso'] = upperTorso
+    session['units'] = units
+    session['sleeveYokeEndCount'] = sleeveYokeEndCount
+    session['fbYokeEndCount'] = fbYokeEndCount
+    session['sleeveCO'] = sleeveCO
+    session['waistDecs'] = waistDecs
+    session['waistDecRows'] = waistDecRows
+    session['waistCount'] = waistCount
+    session['hipIncs'] = hipIncs
+    session['hipIncRows'] = hipIncRows
+    session['bottomCount'] = bottomCount
+    session['topSleeveCount'] = topSleeveCount
+    session['sleeveDecs'] = sleeveDecs
+    session['sleeveDecRows'] = sleeveDecRows
+    session['bottomSleeveCount'] = bottomSleeveCount
+    session['sAnswer'] = sAnswer
+    session['tAnswer'] = tAnswer
     
     return render_template("pattern.html", spi=spi, rpi=rpi,
     neck=neck, bust=bust, waist=waist, hips=hips, arm=arm, upperBack=upperBack,
@@ -518,6 +583,8 @@ def sockpattern():
                            needleSizeLg=needleSizeLg, footLength=footLength,
                            ankle=ankle, units3=units3, yarnNeeded=yarnNeeded,
                            rpi=rpi, spi=spi)
+
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 if __name__ == "__main__":
     app.run(debug=True)
