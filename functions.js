@@ -1,19 +1,48 @@
 function openPattern(evt, patternType) 
 {
 	var i, tabcontent, tablinks;
-	tabcontent = document.getElementsByClassName("tabcontent")
+	tabcontent = document.getElementsByClassName("tab2content");
 	for (i=0; i < tabcontent.length; i++)
 	{
 		tabcontent[i].style.display = "none";
 	}
-	tablinks = document.getElementsByClassName("tablinks")
+	tablinks = document.getElementsByClassName("tab2links");
 	for (i=0; i<tablinks.length; i++)
 	{
 		tablinks[i].className = tablinks[i].className.replace(" active", "");
 	}
 	document.getElementById(patternType).style.display = "block";
 	evt.currentTarget.className += " active";
+	
+	if (patternType == "Sweater")
+	{
+		document.getElementById("sweaterimg").style.display="inline";
+		document.getElementById("sockimg").style.display="none";
+	}
+	if (patternType == "Socks")
+	{
+		document.getElementById("sweaterimg").style.display="none";
+		document.getElementById("sockimg").style.display="inline";
+	}
 }
+
+function openTab(evt, windowType) 
+{
+	var i, tabcontent, tablinks;
+	tabcontent = document.getElementsByClassName("tab1content");
+	for (i=0; i < tabcontent.length; i++)
+	{
+		tabcontent[i].style.display = "none";
+	}
+	tablinks = document.getElementsByClassName("tab1links");
+	for (i=0; i<tablinks.length; i++)
+	{
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
+	document.getElementById(windowType).style.display = "block";
+	evt.currentTarget.className += " active";
+}
+
 function showGaugeWindow()
 {
 	var y = document.getElementById("gauge_swatch");

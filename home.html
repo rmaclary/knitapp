@@ -1,36 +1,69 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <style>
-		.hidden 
-		{
-		display: none;
-		}
-	</style>
-	<link rel="stylesheet" href="{{ url_for('static',     filename='css/style.css') }}">
-    <meta charset="utf-8">
-    <title>Pattern Assistant</title>
-  </head>
-  <header>
-	<h1>Pattern Assistant</h1>
-  </header>
-  <nav>
-  </nav>
-  <body>
-	<div class="row">
-		<div class = "column about">
-			<h2>The 5 W's of Pattern Assistant</h2>
-			<ul>
-				<li><b>Who is it for?</b> You, of course! Or anyone who wishes to design their own custom garments but doesn't know where to start</li>
-				<li><b>What is it?</b> A calculator of sorts that generates a basic pattern based on your own measurements and gauge</li>
-				<li><b>When should I use this?</b> Ideally after you have chosen yarn, and knit a gauge swatch, but before you actually start knitting</li>
-				<li><b>Where</b> This 'W' doesn't really make much sense in this context, but I suppose you could use this pattern generator anywhere you have access to the Internet!</li>
-				<li><b>Why?</b> Back in 2016 I had some great yarn and a very vivid picture in my head of the exact sweater I wanted to knit with it. The problem? I couldn't find a pattern that looked like what I was imagining and I had no experience designing my own. It took a lot of trial and error (and frogging and crying) for me to figure out how to create the sweater I wanted. But what if there was an app out there that I could use to help me at least make sure I had the right number of stitches? Or was decreasing the right number of times? 5 years (and a computer science degree) later I created this in hopes that it will help someone else as well as myself</li>
-			</ul>
+    <head>
+		<style>
+			.hidden 
+			{
+			display: none;
+			}
+		</style>
+		<link rel="stylesheet" href="{{ url_for('static',     filename='css/style.css') }}">
+		<meta charset="utf-8">
+		<title>Pattern Assistant</title>
+    </head>
+    <body>
+		<header class="row">
+			<div class="logo"><img class="logoimg" src="../static/Logo.jpg" width="200px"/></div>
+			<div class="head">
+				<h1>Pattern Assistant</h1>
+				<h3>an interactive calculator to help with basic pattern design</h3>
+			</div>
+		</header>
+		<br>
+		<div class="tab1">
+			<button class="tab1links active" onclick="openTab(event,'home')">Home</button>
+			<button class="tab1links" onclick="openTab(event,'about')">About</button>
+			<button class="tab1links" onclick="openTab(event,'instructions')">How to Use</button>
 		</div>
-
-		<div class="column instructions">
-			<h2>How to use the calculators</h2>
+		<br>
+		<div id="home" class="tab1content" style="display:block; border:none; text-align: center">
+			<p style="text-align: left;">
+				Welcome to the pattern assistant! A calculator designed to help you with custom knitting your own garments. Choose your item (currently calculators are available for sweaters and socks), get your measurements, gather your yarn and get started! See the about section for more info on the calculators and the How-To guide for details on how to utilize the calculators 
+			</p>
+			<img class="gen_img" src="../static/Red_sweater.jpg" alt="red and white colorwork sweater" border="2"/>
+			<img class="gen_img" src="../static/Blue_sweater.jpg" alt="blue cowl neck sweater" border="2"/>
+			<img class="gen_img" src="../static/Blue_socks.jpg" alt="2 pairs of blue socks" border="2"/>
+			<img class="gen_img" src="../static/Striped_sweater.jpg" alt="grey and green striped sweater" border="2"/>
+			<img class="gen_img" src="../static/Green_socks.jpg" alt="a pair of green socks" border="2"/>
+			<img class="gen_img" src="../static/Orange_socks.jpg" alt="2 pairs of orange socks" border="2"/>
+		</div>
+		<div id="about" class="tab1content">
+			<h2 class="titles">The 5 W's of Pattern Assistant</h2>
+			<table>
+				<tr>
+					<td><b>Who</b></td>
+					<td>Who should use this? You, of course! Or anyone who wishes to design their own custom garments but doesn't know where to start</td>
+				</tr>
+				<tr>
+					<td><b>What</b></td>
+					<td>This is a calculator of sorts that generates a basic pattern based on your own measurements and gauge</td>
+				</tr>
+				<tr>
+					<td><b>When</b></td>
+					<td>Ideally you should utilize the assistant after you have chosen yarn, and knit a gauge swatch, but before you actually start knitting</td>
+				</tr>
+				<tr>
+					<td><b>Where</b></td>
+					<td>This 'W' doesn't really make much sense in this context, but I suppose you could use this pattern generator anywhere you have access to the Internet</td>
+				</tr>
+				<tr>
+					<td><b>Why</b></td>
+					<td>Back in 2016 I had some great yarn and a very vivid picture in my head of the exact sweater I wanted to knit with it. The problem? I couldn't find a pattern that looked like what I was imagining and I had no experience designing my own. It took a lot of trial and error (and frogging and crying) for me to figure out how to create the sweater I wanted. But what if there was an app out there that I could use to help me at least make sure I had the right number of stitches? Or was decreasing the right number of times? 5 years (and a computer science degree) later I created this in hopes that it will help someone else as well as myself</td>
+				</tr>
+			</table>
+		</div>
+		<div id="instructions" class="tab1content">
+			<h2 class="titles">How to use the calculators</h2>
 			<ol>	
 				<li>Select the garment you wish to knit (currently you may choose from top-down sweaters or basic socks)</li>
 				<li>Measure your gauge swatch and input the measurements here
@@ -46,168 +79,183 @@
 					</ul>
 				</li>
 				<li>For socks, if you do not have actual measurements you can calculate based on shoe size</li>
-				<li>The sweater calculator will output a pattern with 0 ease. If you wish to have any positive/negative ease (be looser or tighter fitting) you will have to adjust the stitch count accordingly. For more information on ease, click HERE</li>
+				<li>The sweater calculator will output a pattern with 0 ease. If you wish to have any positive/negative ease (be looser or tighter fitting) you will have to adjust the stitch count accordingly. For more information on ease, click <a href="https://www.oliveknits.com/knit-better-sweaters-ease/">HERE</a></li>
 				<li>The sock calculator is designed to have a bit of negative ease, this way your socks will be stretchy and won't fall down</li>
 				<li>The patterns generated have not been extensively tested and are meant simply to assist you in your designing endeavors</li>
 				<li>If you add a pattern element such as cabling or a lace pattern, your gauge and stitch count will need to be adjusted accordingly</li>
 				<li>Happy knitting!</li>
 			</ol>
 		</div>
-	</div>
-	<div class="calculators">
-		<div class="tab">
-			<button class="tablinks" onclick="openPattern(event,'Sweater')">Sweater</button>
-			<button class="tablinks" onclick="openPattern(event,'Socks')">Socks</button>
-		</div>
-		
-		<div id="Sweater" class="tabcontent">
-			<form action="/pattern" method="post">
-				<h4>Measure in: </h4>
-				Inches <input type="radio" name="units" id="inches" value="inches" onclick="measureUnit()" checked>
-				Centimeters <input type="radio" name="units" id="cent" value="centimeters" onclick="measureUnit()">
-				<br>
-				<h4>Do you have a gauge swatch?</h4>
-				Yes <input type="radio" name="gaugeAns" id="yes" value="yes" onclick="showGaugeWindow()" checked>
-				No <input type="radio" name="gaugeAns" id="no" value="no" onclick="showGaugeWindow()">
-				<br>
-				<fieldset id="gauge_swatch" class="auto-width">	
-					<legend>Gauge</legend>
-					<h4>Enter measurements of your gauge swatch</h4>
-					<label for="spi" id="spi_lbl">Stitches per Inch</label>
-					<input type="number" min="1" step=".01" id="spi" name="spi" required><br><br>			
-					<label for="rpi" id="rpi_lbl">Rows per Inch</label>
-					<input type="number" min="1" step=".01" id="rpi" name="rpi" required><br>
-				</fieldset>
-				<br>
-				<fieldset id="yarn_type" class="hidden">
-					<legend>Yarn Type</legend>
-					Select yarn type <select name="yarn" id="yarn" required>
-						<option name="yarn" value="lace">Lace</option>
-						<option name="yarn" value="fingering">Fingering</option>
-						<option name="yarn" value="sport">Sport</option>
-						<option name="yarn" value="dk">DK</option>
-						<option name="yarn" value="worsted">Worsted</option>
-						<option name="yarn" value="aran">Aran</option>
-						<option name="yarn" value="bulky">Bulky</option>
-					</select>
-			
-				</fieldset>
-				<br>
-				<fieldset class="auto-width">
-					<legend>Other Options</legend>
-					<h4>Waist Shaping</h4>
-					Yes<input type="radio" name="shapeAns" id="yes_shaping" value="yes" onclick="showShapingOptions()">
-					No<input type="radio" name="shapeAns" id="no_shaping" value="no" onclick="showShapingOptions()" checked>
-					<br>
-					<fieldset id="sType" class="hidden">
-						<legend>Shaping Type</legend>
-						Hourglass<input type="radio" name="shapeType" id="hourglass" value="hourglass" checked>
-						Triangle (A-Line)<input type="radio" name="shapeType" id="triangle" value="triangle">
-					</fieldset>
-				</fieldset>
-				<br>
-				<fieldset id="measurements" class="auto-width">
-					<legend id="measurements_legend">Measurements (Inches)</legend>
-					<h4>Enter body measurements</h4>
-					Neck: <input type="number" min="1" step=".01" name="neck" value="14" required><br><br>
-					Chest: <input type="number" min="1" step=".01" name="bust" value="36" required><br><br>
-					Waist:<input type="number" min="1" step=".01" name="waist" value="30" required><br><br>
-					Hips(where sweater ends): <input type="number" min="1" step=".01" name="hips" value="36" required><br><br>
-					Arm at bicep: <input type="number" min="1" step=".01" name="arm" value="12" required><br><br>
-					Wrist: <input type="number" min="1" step=".01" name="wrist" value="7.5" required><br><br>
-					Length from bottom of neck to armpit: <input type="number" min="1" step=".01" name="upperBack" value="7" required><br><br>
-					Length from armpit to waist: <input type="number" min="1" step=".01" name="upperTorso" value="7" required><br><br>
-					Length from waist to hips: <input type="number" min="1" step=".01" name="lowerTorso" value="7" required><br><br>
-					Arm length (armpit to wrist): <input type="number" min="1" step=".01" name="armLength" value="18" required><br><br>
-				</fieldset>
-				<br>
-				<input type="submit" value="submit" />
-			
-			</form>
-		</div>
-		<div id="Socks" class="tabcontent">
-			<form action="/sockpattern" method="post">
-				<h4>Measure in: </h4>
-				Inches <input type="radio" name="units1" id="inches1" value="inches" onclick="measureUnitSock()" checked>
-				Centimeters <input type="radio" name="units1" id="cent1" value="centimeters" onclick="measureUnitSock()">
-				<br>
-				<h4>Do you have a gauge swatch?</h4>
-				Yes <input type="radio" name="gaugeAns1" id="yes1" value="yes" onclick="showGaugeWindowSock()" checked>
-				No <input type="radio" name="gaugeAns1" id="no1" value="no" onclick="showGaugeWindowSock()">
-				<br>
-				<fieldset id="gauge_swatch1" class="auto-width">	
-					<legend>Gauge</legend>
-					<h4>Enter measurements of your gauge swatch</h4>
-					<label for="spi1" id="spi_lbl1">Stitches per Inch</label>
-					<input type="number" min="1" step=".01" id="spi1" name="spi1" required><br><br>			
-					<label for="rpi1" id="rpi_lbl1">Rows per Inch</label>
-					<input type="number" min="1" step=".01" id="rpi1" name="rpi1" required><br>
-				</fieldset>
-				<br>
-				<fieldset id="yarn_type1" class="hidden">
-					<legend>Yarn Type</legend>
-					Select yarn type <select name="yarn1" id="yarn1" required>
-						<option name="yarn1" value="lace">Lace</option>
-						<option name="yarn1" value="fingering">Fingering</option>
-						<option name="yarn1" value="sport">Sport</option>
-						<option name="yarn1" value="dk">DK</option>
-						<option name="yarn1" value="worsted">Worsted</option>
-						<option name="yarn1" value="aran">Aran</option>
-						<option name="yarn1" value="bulky">Bulky</option>
-					</select>
-							
-				</fieldset>
-				<br><br>
-				<fieldset id="measurements1" class="auto-width">
-					<legend id="measurements_legend1">Measurements (Inches)</legend>
-					<h4>Measure by:</h4>
-					Foot measurements <input type="radio" name="measureTyp" id="footMeas" value="footMeas" onclick="measureType()" checked>
-					Shoe size <input type="radio" name="measureTyp" id="shoeSize" value="shoeSize" onclick="measureType()">
-					<br><br>
-					<fieldset id="help">
-						<legend>Foot Measurements</legend>
-						Ankle: <input type="number" min="1" step=".01" name="ankle" id="ankle" value="9" required><br><br>
-						Foot Length: <input type="number" min="1" step=".01" name="footLength" id="footLength" value="9.5" required><br><br>
-					</fieldset>
-					<fieldset id="help2" class="hidden">
-						<legend>Shoe Size (US)</legend>
-						Mens<input type="radio" name="gender" id="men" value="men" onclick="genderCheck()" checked>
-						Womens<input type="radio" name="gender" id="women" value="women" onclick="genderCheck()">
+		<br>
+		<div class="row">
+			<div class="column calculators">
+				<div class="tab2">
+					<button class="tab2links" onclick="openPattern(event,'Sweater')">Sweater</button>
+					<button class="tab2links" onclick="openPattern(event,'Socks')">Socks</button>
+				</div>
+				
+				<div id="Sweater" class="tab2content">
+					<form action="/pattern" method="post">
+						<h4>Measure in: </h4>
+						Inches <input type="radio" name="units" id="inches" value="inches" onclick="measureUnit()" checked>
+						Centimeters <input type="radio" name="units" id="cent" value="centimeters" onclick="measureUnit()">
+						<br>
+						<h4>Do you have a gauge swatch?</h4>
+						Yes <input type="radio" name="gaugeAns" id="yes" value="yes" onclick="showGaugeWindow()" checked>
+						No <input type="radio" name="gaugeAns" id="no" value="no" onclick="showGaugeWindow()">
+						<br>
+						<fieldset id="gauge_swatch" class="auto-width">	
+							<legend>Gauge</legend>
+							<h4>Enter measurements of your gauge swatch</h4>
+							<label for="spi" id="spi_lbl">Stitches per Inch</label>
+							<input type="number" min="1" step=".01" id="spi" name="spi" required><br><br>			
+							<label for="rpi" id="rpi_lbl">Rows per Inch</label>
+							<input type="number" min="1" step=".01" id="rpi" name="rpi" required><br>
+						</fieldset>
+						<br>
+						<fieldset id="yarn_type" class="hidden">
+							<legend>Yarn Type</legend>
+							Select yarn type <select name="yarn" id="yarn" required>
+								<option name="yarn" value="lace">Lace</option>
+								<option name="yarn" value="fingering">Fingering</option>
+								<option name="yarn" value="sport">Sport</option>
+								<option name="yarn" value="dk">DK</option>
+								<option name="yarn" value="worsted">Worsted</option>
+								<option name="yarn" value="aran">Aran</option>
+								<option name="yarn" value="bulky">Bulky</option>
+							</select>
+					
+						</fieldset>
+						<br>
+						<fieldset class="auto-width">
+							<legend>Other Options</legend>
+							<h4>Waist Shaping</h4>
+							Yes<input type="radio" name="shapeAns" id="yes_shaping" value="yes" onclick="showShapingOptions()">
+							No<input type="radio" name="shapeAns" id="no_shaping" value="no" onclick="showShapingOptions()" checked>
+							<br>
+							<fieldset id="sType" class="hidden">
+								<legend>Shaping Type</legend>
+								Hourglass<input type="radio" name="shapeType" id="hourglass" value="hourglass" checked>
+								Triangle (A-Line)<input type="radio" name="shapeType" id="triangle" value="triangle">
+							</fieldset>
+						</fieldset>
+						<br>
+						<fieldset id="measurements" class="auto-width">
+							<legend id="measurements_legend">Measurements (Inches)</legend>
+							<h4>Enter body measurements</h4>
+							Neck: <input type="number" min="1" step=".01" name="neck" value="14" required><br><br>
+							Chest: <input type="number" min="1" step=".01" name="bust" value="36" required><br><br>
+							Waist:<input type="number" min="1" step=".01" name="waist" value="30" required><br><br>
+							Hips(where sweater ends): <input type="number" min="1" step=".01" name="hips" value="36" required><br><br>
+							Arm at bicep: <input type="number" min="1" step=".01" name="arm" value="12" required><br><br>
+							Wrist: <input type="number" min="1" step=".01" name="wrist" value="7.5" required><br><br>
+							Length from bottom of neck to armpit: <input type="number" min="1" step=".01" name="upperBack" value="7" required><br><br>
+							Length from armpit to waist: <input type="number" min="1" step=".01" name="upperTorso" value="7" required><br><br>
+							Length from waist to hips: <input type="number" min="1" step=".01" name="lowerTorso" value="7" required><br><br>
+							Arm length (armpit to wrist): <input type="number" min="1" step=".01" name="armLength" value="18" required><br><br>
+						</fieldset>
+						<br>
+						<input type="submit" value="submit" />
+					
+					</form>
+				</div>
+				<div id="Socks" class="tab2content">
+					<form action="/sockpattern" method="post">
+						<h4>Measure in: </h4>
+						Inches <input type="radio" name="units1" id="inches1" value="inches" onclick="measureUnitSock()" checked>
+						Centimeters <input type="radio" name="units1" id="cent1" value="centimeters" onclick="measureUnitSock()">
+						<br>
+						<h4>Do you have a gauge swatch?</h4>
+						Yes <input type="radio" name="gaugeAns1" id="yes1" value="yes" onclick="showGaugeWindowSock()" checked>
+						No <input type="radio" name="gaugeAns1" id="no1" value="no" onclick="showGaugeWindowSock()">
+						<br>
+						<fieldset id="gauge_swatch1" class="auto-width">	
+							<legend>Gauge</legend>
+							<h4>Enter measurements of your gauge swatch</h4>
+							<label for="spi1" id="spi_lbl1">Stitches per Inch</label>
+							<input type="number" min="1" step=".01" id="spi1" name="spi1" required><br><br>			
+							<label for="rpi1" id="rpi_lbl1">Rows per Inch</label>
+							<input type="number" min="1" step=".01" id="rpi1" name="rpi1" required><br>
+						</fieldset>
+						<br>
+						<fieldset id="yarn_type1" class="hidden">
+							<legend>Yarn Type</legend>
+							Select yarn type <select name="yarn1" id="yarn1" required>
+								<option name="yarn1" value="lace">Lace</option>
+								<option name="yarn1" value="fingering">Fingering</option>
+								<option name="yarn1" value="sport">Sport</option>
+								<option name="yarn1" value="dk">DK</option>
+								<option name="yarn1" value="worsted">Worsted</option>
+								<option name="yarn1" value="aran">Aran</option>
+								<option name="yarn1" value="bulky">Bulky</option>
+							</select>
+									
+						</fieldset>
 						<br><br>
-						<div id="womensize" class="hidden">
-							Select shoe size (round up for half sizes)<select name="wsize" required>
-								<option name="wsize" value="5">5</option>
-								<option name="wsize" value="6">6</option>
-								<option name="wsize" value="7">7</option>
-								<option name="wsize" value="8">8</option>
-								<option name="wsize" value="9">9</option>
-								<option name="wsize" value="10">10</option>
-								<option name="wsize" value="11">11</option>
-								<option name="wsize" value="12">12</option>
-							</select>
-						</div>
-						<div id="mensize">
-							Select shoe size (round up for half sizes)<select name="msize" required>
-								<option name="msize" value="6">6</option>
-								<option name="msize" value="7">7</option>
-								<option name="msize" value="8">8</option>
-								<option name="msize" value="9">9</option>
-								<option name="msize" value="10">10</option>
-								<option name="msize" value="11">11</option>
-								<option name="msize" value="12">12</option>
-								<option name="msize" value="13">13</option>
-								<option name="msize" value="14">14</option>
-							</select>
-						</div>
-					</fieldset>
-				</fieldset>
-				<br><br>
-				<input type="submit" value="submit" />
-			</form>
+						<fieldset id="measurements1" class="auto-width">
+							<legend id="measurements_legend1">Measurements (Inches)</legend>
+							<h4>Measure by:</h4>
+							Foot measurements <input type="radio" name="measureTyp" id="footMeas" value="footMeas" onclick="measureType()" checked>
+							Shoe size <input type="radio" name="measureTyp" id="shoeSize" value="shoeSize" onclick="measureType()">
+							<br><br>
+							<fieldset id="help">
+								<legend>Foot Measurements</legend>
+								Ankle: <input type="number" min="1" step=".01" name="ankle" id="ankle" value="9" required><br><br>
+								Foot Length: <input type="number" min="1" step=".01" name="footLength" id="footLength" value="9.5" required><br><br>
+							</fieldset>
+							<fieldset id="help2" class="hidden">
+								<legend>Shoe Size (US)</legend>
+								Mens<input type="radio" name="gender" id="men" value="men" onclick="genderCheck()" checked>
+								Womens<input type="radio" name="gender" id="women" value="women" onclick="genderCheck()">
+								<br><br>
+								<div id="womensize" class="hidden">
+									Select shoe size (round up for half sizes)<select name="wsize" required>
+										<option name="wsize" value="5">5</option>
+										<option name="wsize" value="6">6</option>
+										<option name="wsize" value="7">7</option>
+										<option name="wsize" value="8">8</option>
+										<option name="wsize" value="9">9</option>
+										<option name="wsize" value="10">10</option>
+										<option name="wsize" value="11">11</option>
+										<option name="wsize" value="12">12</option>
+									</select>
+								</div>
+								<div id="mensize">
+									Select shoe size (round up for half sizes)<select name="msize" required>
+										<option name="msize" value="6">6</option>
+										<option name="msize" value="7">7</option>
+										<option name="msize" value="8">8</option>
+										<option name="msize" value="9">9</option>
+										<option name="msize" value="10">10</option>
+										<option name="msize" value="11">11</option>
+										<option name="msize" value="12">12</option>
+										<option name="msize" value="13">13</option>
+										<option name="msize" value="14">14</option>
+									</select>
+								</div>
+							</fieldset>
+						</fieldset>
+						<br><br>
+						<input type="submit" value="submit" />
+					</form>
+				</div>
+			</div>
+			<div class="column sweater hidden" id="sweaterimg">
+				<img class="calcimg" src="../static/Sweater_outline.jpg" alt="sweater measurement outline guide" border="2"/>
+				<br>
+				<img class="calcimg" src="../static/Sweater.jpg" alt="Top down raglan sweater" border = "2"/>
+			</div>
+			<div class="column socks hidden" id="sockimg">
+				<img class="calcimg" src="../static/Sock_outline.jpg" alt="sock measurement outline guide" border="2"/>
+				<img class="calcimg" src="../static/Socks.jpg" alt="Pair of hand-knit socks" border = "2"/>
+			</div>
 		</div>
-	</div>
-	<script src="{{ url_for('static',     filename='js/functions.js') }}">
-	</script>
+		<br>
+		<footer>
+			&#9734 Website design: Rachel Maclary &#9734 March 2021 &#9734
+		</footer>
+		<script src="{{ url_for('static',     filename='js/functions.js') }}">
+		</script>
 
-  </body>
+	</body>
 </html>

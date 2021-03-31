@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request, session, make_response
-import pdfkit
 from reportlab.rl_config import defaultPageSize
-config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
-import math
-import io
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, Frame, Spacer
+import math
+import io
 
 
 app = Flask(__name__)
@@ -130,7 +128,7 @@ def sockpdf():
     pattern.append(Paragraph("<b>-ssk:</b> Slip Slip Knit", styleN))
     pattern.append(Paragraph("<b>-sl:</b> slip 1 from left to right needle", styleN))
     pattern.append(spacer)
-    pattern.append(Paragraph(f"Cast on {castOn} stitches and join in the round, being careful not to twist. Knit in the round in desired pattern for {round(cuffLength)} {units} or until cuff has reached desired length. Divide for heel flap: place last {heelFlap} stitches on hold for top of foot. Heel flap will be worked over remaining {heelFlap} stitches.",styleN))
+    pattern.append(Paragraph(f"Cast on {castOn} stitches and join in the round, being careful not to twist. Work 2x2 rib (knit 2, purl 2), or desired pattern, in the round for {round(cuffLength)} {units} or until cuff has reached desired length. Divide for heel flap: place last {heelFlap} stitches on hold for top of foot. Heel flap will be worked over remaining {heelFlap} stitches.",styleN))
     pattern.append(Paragraph("Row 1: *sl1, k1* repeat until end of round",styleN))
     pattern.append(Paragraph("Row 2: sl1, purl to end of round",styleN))
     pattern.append(Paragraph(f"Work these 2 rows a total of {heelFlapRows/2} times, ending after a wrong side (purl) row. Begin heel turn as follows:",styleN))
@@ -149,7 +147,7 @@ def sockpdf():
     pattern.append(Paragraph("Round 2: Knit to end of round",styleN))
     pattern.append(Paragraph(f"Continue these 2 rounds {toeDecCount-1} times more {toeCount} stitches remain. Knit to first side marker, and place all stitches from heel and sides onto one DPN, and sts from top of foot onto a 2nd DPN. Graft together with kitchener stitch.",styleN))
 
-    output2 = io.BytesIO()
+    output2 = io.BytesIO() #to save pdf
     c = Canvas(output2) #create pdf
     c.setFont("Helvetica-Bold", 20)
     c.drawCentredString(page_width/2, page_height-60, "Basic Sock Pattern") #title
@@ -217,8 +215,8 @@ def pattern():
                                     rpi = 0
 
     if(unitType == "centimeters" and gAnswer == "yes"): #spi/rpi conversion to inches for purposes of needle sizing
-        spi = round(spi / 2.54)
-        rpi = round(rpi / 2.54)
+        spi = round(spi * 2.54)
+        rpi = round(rpi * 2.54)
     needleSizeSm = 0
     needleSizeLg = 0
     #determine recommended needle size and yarn amount based on gauge
@@ -274,8 +272,8 @@ def pattern():
         yarnNeededLg = round(yarnNeededLg / 1.094)
 
     if(unitType == "centimeters"): #spi/rpi conversion to cm
-        spi = round(spi * 2.54)
-        rpi = round(rpi * 2.54)
+        spi = round(spi / 2.54)
+        rpi = round(rpi / 2.54)
 
 
     neck = float(request.form["neck"])
